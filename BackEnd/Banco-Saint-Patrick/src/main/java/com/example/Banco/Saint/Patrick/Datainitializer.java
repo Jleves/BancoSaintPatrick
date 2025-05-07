@@ -26,13 +26,14 @@ public class Datainitializer implements CommandLineRunner {
 
 
 
-
+//.usuarioRole(UsuarioRole.USER) --> asignar rol de usuario
 
 
         Usuario usuario1= new Usuario();
         usuario1.setPin(4345);
         Tarjeta tarjeta1= new Tarjeta(40555, usuario1);
         tarjeta1.setNumero("4546-8574-1856-5565");
+
 
         Usuario usuario2 = new Usuario();
         usuario2.setPin(1595);

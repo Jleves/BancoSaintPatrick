@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 @Service
-public class UsuarioService {
+public class UsuarioService implements UserDetailsService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
@@ -28,5 +28,13 @@ public class UsuarioService {
     }
 
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Usuario> buscarUsuario = usuarioRepository.findByUsername(username);
+        if(buscarUsuario.isPresent()){
+            System.out.println("Load user by Username:  " + buscarUsuario.get().getAuthorities());
+            return buscarUsuario.get();
 
+        }else throw new UsernameNotFoundException("No se encontro el usuario");
+    }
 }
