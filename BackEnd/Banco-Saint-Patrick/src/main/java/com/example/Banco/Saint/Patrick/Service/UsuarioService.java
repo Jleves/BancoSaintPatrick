@@ -1,0 +1,32 @@
+package com.example.Banco.Saint.Patrick.Service;
+
+import com.example.Banco.Saint.Patrick.Model.Tarjeta;
+import com.example.Banco.Saint.Patrick.Model.Usuario;
+import com.example.Banco.Saint.Patrick.Repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+@Service
+public class UsuarioService {
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public Optional<Usuario> usuarioId(Long id){
+        Optional<Usuario> resultado=usuarioRepository.findById(id);
+
+        System.out.println("Resultado en service   --->  " + resultado);
+       return resultado;
+    }
+
+
+
+}
