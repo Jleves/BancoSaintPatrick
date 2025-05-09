@@ -20,8 +20,9 @@ public class AuthController {
     private final UsuarioService usuarioService;
     private final JWTUtil jwtUtil;
 
-    @PostMapping(value = "login")
+    @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest){
+        System.out.println("Controlador login:  " + loginRequest);
 
         return ResponseEntity.ok(authService.login(loginRequest));
     }

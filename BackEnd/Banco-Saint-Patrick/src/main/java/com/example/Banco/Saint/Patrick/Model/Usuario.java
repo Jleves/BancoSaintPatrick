@@ -4,17 +4,19 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-@Data
+@Getter
+@Setter
+@Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,59 +31,30 @@ public class Usuario implements UserDetails {
 
 
     @Column(nullable = false)
-    private int pin;
+    private String pin;
 
     private String username;
+    @Enumerated(EnumType.STRING)
+    private UsuarioRole usuarioRole;
 
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Tarjeta> tarjetasId= new ArrayList<>();
 
 
     private List <String>contactos;
 
-    public void setPin(int pin) {
-        this.pin = pin;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public int getPin() {
-        return pin;
-    }
-
-    public List<Tarjeta> getTarjetasId() {
-        return tarjetasId;
-    }
-
-    public void setTarjetasId(List<Tarjeta> tarjetasId) {
-        this.tarjetasId = tarjetasId;
-    }
-
-    public List<String> getContactos() {
-        return contactos;
-    }
-
-    public void setContactos(List<String> contactos) {
-        this.contactos = contactos;
-    }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_".concat (usuarioRole.name()));
+        return Collections.singletonList(grantedAuthority);
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return pin;
     }
 
     @Override
@@ -103,4 +76,6 @@ public class Usuario implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+
 }

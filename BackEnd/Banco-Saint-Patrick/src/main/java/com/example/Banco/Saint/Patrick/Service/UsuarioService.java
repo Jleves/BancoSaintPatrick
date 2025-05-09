@@ -30,7 +30,10 @@ public class UsuarioService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        System.out.println("username antes de buscarlo en el repositorio:   --->" + username);
         Optional<Usuario> buscarUsuario = usuarioRepository.findByUsername(username);
+        System.out.println("Usuario buscado en el repositorio: ------>  " + buscarUsuario);
         if(buscarUsuario.isPresent()){
             System.out.println("Load user by Username:  " + buscarUsuario.get().getAuthorities());
             return buscarUsuario.get();

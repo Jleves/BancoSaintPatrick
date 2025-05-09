@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginRequest {
     String username;
-    String password;
+    String pin;
 }
 
 //Los datos que van a venir del controller Auth

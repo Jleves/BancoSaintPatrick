@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Data
-
 @NoArgsConstructor
 public class ErrorResponse {
     private LocalDate timestamp;

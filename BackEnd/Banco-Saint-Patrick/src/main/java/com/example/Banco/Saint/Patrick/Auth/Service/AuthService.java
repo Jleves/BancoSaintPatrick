@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,11 +28,23 @@ public class AuthService {
     @Autowired
     private final AuthenticationManager authenticationManager; // Para que se autentique
     public AuthResponse login(LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword()));
+
+        try {
+
+            System.out.println("Auth Service: --->  username: " + loginRequest.getUsername() +"  Pin:  "+ loginRequest.getPin());
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    loginRequest.getUsername(),
+                    loginRequest.getPin()));
+
+        }catch (AuthenticationException ex) {
+            throw new RuntimeException("PIN o usuario incorrecto");
+
+    }
+        System.out.println("Login: -->  Username:  " + loginRequest.getUsername() +"  Pin:  " + loginRequest.getPin());
         Usuario usuario = usuarioRepository.findByUsername(loginRequest.getUsername()).orElseThrow();
+        System.out.println("Usuario buscado en el repositorio: --->  " + usuario);
         String token = jwtUtil.generateToken(usuario);
         return AuthResponse.builder()
                 .token(token)
                 .build();
-    }
-}
+}}
