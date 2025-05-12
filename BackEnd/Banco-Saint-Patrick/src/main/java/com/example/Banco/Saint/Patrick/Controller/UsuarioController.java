@@ -1,6 +1,7 @@
 package com.example.Banco.Saint.Patrick.Controller;
 
 import com.example.Banco.Saint.Patrick.Exceptions.ResourceNotFoundException;
+import com.example.Banco.Saint.Patrick.Model.DTO.UserDTO;
 import com.example.Banco.Saint.Patrick.Model.Tarjeta;
 import com.example.Banco.Saint.Patrick.Model.Usuario;
 import com.example.Banco.Saint.Patrick.Service.UsuarioService;
@@ -25,9 +26,9 @@ public class UsuarioController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario>buscarUsuarioId(@PathVariable Long id){
+    public ResponseEntity<UserDTO>buscarUsuarioId(@PathVariable Long id){
 
-        ResponseEntity<Usuario> resultado= ResponseEntity.ok(usuarioService.usuarioId(id).orElseThrow(()->new ResourceNotFoundException("Usuario no encontrado")));
+        ResponseEntity<UserDTO> resultado= ResponseEntity.ok(usuarioService.usuarioId(id).orElseThrow(()->new ResourceNotFoundException("Usuario no encontrado")));
         System.out.println("Resultado en controller   --->  " + resultado);
         return resultado;
     }

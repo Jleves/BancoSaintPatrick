@@ -3,6 +3,7 @@ package com.example.Banco.Saint.Patrick.Controller;
 import com.example.Banco.Saint.Patrick.Controller.Response.SuccessResponse;
 import com.example.Banco.Saint.Patrick.Exceptions.ResourceNotFoundException;
 
+import com.example.Banco.Saint.Patrick.Model.DTO.TarjetaDTO;
 import com.example.Banco.Saint.Patrick.Model.Tarjeta;
 import com.example.Banco.Saint.Patrick.Model.Transaccion;
 import com.example.Banco.Saint.Patrick.Service.TarjetaService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -38,20 +40,21 @@ public class TransaccionController {
 
         Transaccion transaccionDto = Transaccion.transaccionEntrada(transaccionDtoEntrada);
 
+        System.out.println("Transaccion DTO:   " + transaccionDto + "Tarjeta Destino: " + transaccionDto.getDestinoTarjetaId() + "Tarjeta Origen:  "+ transaccionDto.getOrigenTarjetaId());
 
-        Tarjeta tarjetaOrigen = tarjetaService.buscarPorNumero(transaccionDto.getOrigenTarjetaId());
+        Optional<TarjetaDTO> tarjetaOrigen = tarjetaService.buscarPorNumero(transaccionDto.getOrigenTarjetaId());
+
+        System.out.println("Resultado busqueda tarjeta origen:   " + tarjetaOrigen);
+        Optional<TarjetaDTO> tarjetaDestino = tarjetaService.buscarPorNumero(transaccionDto.getDestinoTarjetaId());
 
 
-        Tarjeta tarjetaDestino = tarjetaService.buscarPorNumero(transaccionDto.getDestinoTarjetaId());
-
-
-            tarjetaService.realizarTransaccion(tarjetaOrigen.getNumero(),tarjetaDestino.getNumero(),transaccionDto.getMonto());
+            tarjetaService.realizarTransaccion(tarjetaOrigen.get().getNumero(),tarjetaDestino.get().getNumero(),transaccionDto.getMonto());
             String respuesta = "Transacción realizada con éxito.\n" +
                     "Transacción número: " + transaccionDto.getId() + "\n" +
                     "Tarjeta Origen: " + transaccionDto.getOrigenTarjetaId() + "\n" +
                     "Tarjeta Destino: " + transaccionDto.getDestinoTarjetaId() + "\n" +
                     "Monto: " + transaccionDto.getMonto() + "\n" +
-                    "Saldo actual: " + tarjetaOrigen.getSaldo();
+                    "Saldo actual: " + tarjetaOrigen.get().getSaldo();
 
 
 

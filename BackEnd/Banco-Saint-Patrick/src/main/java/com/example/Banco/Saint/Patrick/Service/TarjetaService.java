@@ -2,6 +2,7 @@ package com.example.Banco.Saint.Patrick.Service;
 
 import com.example.Banco.Saint.Patrick.Exceptions.ResourceNotFoundException;
 import com.example.Banco.Saint.Patrick.Exceptions.SaldoInsuficienteException;
+import com.example.Banco.Saint.Patrick.Model.DTO.TarjetaDTO;
 import com.example.Banco.Saint.Patrick.Model.Tarjeta;
 import com.example.Banco.Saint.Patrick.Model.Transaccion;
 import com.example.Banco.Saint.Patrick.Repository.TarjetaRepository;
@@ -23,10 +24,11 @@ public class TarjetaService {
         this.transaccionService = transaccionService;
     }
 
-    public Tarjeta buscarPorNumero(String numero) {
-        Tarjeta tarjetaEncontrada= tarjetaRepository.findByNumero(numero).orElseThrow(()->new ResourceNotFoundException("Tarjeta no encontrada"));
-        cargarTransacciones(tarjetaEncontrada);
-        return tarjetaEncontrada ;}
+    public Optional<TarjetaDTO> buscarPorNumero(String numero) {
+        Optional<Tarjeta> tarjetaEncontrada= tarjetaRepository.findByNumero(numero);
+        // .orElseThrow(()->new ResourceNotFoundException("Tarjeta no encontrada"))
+        tarjetaEncontrada.ifPresent(this::cargarTransacciones);
+        return tarjetaEncontrada.map(TarjetaDTO::tarjetaToTarjetaDTO) ;}
 
     public Tarjeta cargarTransacciones(Tarjeta tarjeta) {
         List<Transaccion> transacciones = transaccionService.obtenerTransaccionesDeTarjeta(tarjeta.getId());
@@ -40,14 +42,21 @@ public class TarjetaService {
 
 
 
-        Tarjeta buscarTarjetaOrigen= buscarPorNumero(idOrigen);
 
+        Tarjeta buscarTarjetaOrigen = buscarPorNumero(idOrigen)
+                .map(TarjetaDTO::tarjetaDTOToTarjeta)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarjeta origen no encontrada"));
 
         if(buscarTarjetaOrigen.getSaldo()>monto){
-        Tarjeta buscarTarjetaDestino= buscarPorNumero(idDestino);
 
 
-        if (buscarTarjetaDestino.getSaldo() < monto) {
+            Tarjeta buscarTarjetaDestino = buscarPorNumero(idDestino)
+                    .map(TarjetaDTO::tarjetaDTOToTarjeta)
+                    .orElseThrow(() -> new ResourceNotFoundException("Tarjeta origen no encontrada"));
+
+
+
+            if (buscarTarjetaDestino.getSaldo() < monto) {
                 throw new SaldoInsuficienteException("Saldo insuficiente en la tarjeta");
         }
 
